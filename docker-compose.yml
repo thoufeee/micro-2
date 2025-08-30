@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  # Auth Service
+  auth:
+    image: auth:latest
+    container_name: auth_service
+    ports:
+      - "8080:8080"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=auth
+      - DB_HOST=auth_db
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:17
+    container_name: auth_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+
+  # Product Service
+  products:
+    image: products:latest
+    container_name: product_service
+    ports:
+      - "8081:8080"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=product
+      - DB_HOST=products_db
+    depends_on:
+      - product_db
+
+  product_db:
+    image: postgres:17
+    container_name: product_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=product
+    ports:
+      - "5434:5432"
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
+
+  # Order Service
+  orders:
+    image: orders:latest
+    container_name: order_service
+    ports:
+      - "8082:8080"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=order_db
+      - DB_HOST=order_db
+    depends_on:
+      - order_db
+
+  order_db:
+    image: postgres:17
+    container_name: order_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=orders
+    ports:
+      - "5435:5432"
+    volumes:
+      - order_db_data:/var/lib/postgresql/data
+
+volumes:
+  auth_db_data:
+  product_db_data:
+  order_db_data:
